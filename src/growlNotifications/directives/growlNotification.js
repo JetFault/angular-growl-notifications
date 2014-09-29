@@ -1,6 +1,6 @@
 (function () {
 
-  function growlNotificationDirective(growlNotifications, $animate, $timeout){
+  function growlNotificationDirective(growlNotifications, $animate, $timeout, $parse){
 
     var defaults = {
       ttl: growlNotifications.options.ttl || 5000
@@ -46,12 +46,18 @@
           options.ttl = scope.$eval(iAttrs.ttl);
         }
 
+        var endFunction = $parse(iAttrs.growlOnend);
+        if (endFunction) {
+          this.onEnd = function() { endFunction(scope); };
+        }
+
         // Move the element to the right location in the DOM
         $animate.move(iElem, growlNotifications.element);
 
         // Schedule automatic removal
         ctrl.timer = $timeout(function () {
-          $animate.leave(iElem);
+          ctrl.remove();
+          //$animate.leave(iElem);
         }, options.ttl);
 
       }
@@ -68,12 +74,14 @@
    * @param $scope
    * @param $element
    */
-  function growlNotificationController($element, $animate) {
+  function growlNotificationController($scope, $element, $animate) {
 
     /**
      * Placeholder for timer promise
      */
     this.timer = null;
+
+    this.onEnd = null;
 
     /**
      * Helper method to close notification manually
@@ -82,6 +90,10 @@
 
       // Remove the element
       $animate.leave($element);
+
+      if(this.onEnd) {
+        this.onEnd();
+      }
 
       // Cancel scheduled automatic removal if there is one
       if (this.timer && this.timer.cancel) {
