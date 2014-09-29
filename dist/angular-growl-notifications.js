@@ -66,9 +66,9 @@
           options.ttl = scope.$eval(iAttrs.ttl);
         }
 
-        var endFunction = $parse(iAttrs.growlOnend);
-        if (endFunction) {
-          this.onEnd = function() { endFunction(scope); };
+        if (iAttrs.growlOnEnd) {
+          var endFunction = $parse(iAttrs.growlOnEnd);
+          ctrl.onEnd = function() { endFunction(scope); };
         }
 
         // Move the element to the right location in the DOM
@@ -86,15 +86,14 @@
   }
 
   // Inject dependencies
-  growlNotificationDirective.$inject = ['growlNotifications', '$animate', '$timeout'];
+  growlNotificationDirective.$inject = ['growlNotifications', '$animate', '$timeout', '$parse'];
 
   /**
    * Directive controller
    *
-   * @param $scope
    * @param $element
    */
-  function growlNotificationController($scope, $element, $animate) {
+  function growlNotificationController($element, $animate) {
 
     /**
      * Placeholder for timer promise
