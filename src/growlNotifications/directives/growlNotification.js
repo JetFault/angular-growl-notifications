@@ -60,6 +60,12 @@
           //$animate.leave(iElem);
         }, options.ttl);
 
+        scope.$on('destroy', function() {
+          if(ctrl.timer && ctrl.timer.cancel) {
+            ctrl.timer.cancel();
+          }
+        });
+
       }
     };
 
