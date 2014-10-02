@@ -74,11 +74,13 @@
         // Move the element to the right location in the DOM
         $animate.move(iElem, growlNotifications.element);
 
-        // Schedule automatic removal
-        ctrl.timer = $timeout(function () {
-          ctrl.remove();
-          //$animate.leave(iElem);
-        }, options.ttl);
+        // Schedule automatic removal if TTL exists
+        if (options.ttl > 0) {
+          ctrl.timer = $timeout(function () {
+            ctrl.remove();
+            //$animate.leave(iElem);
+          }, options.ttl);
+        }
 
         scope.$on('destroy', function() {
           if(ctrl.timer && ctrl.timer.cancel) {
